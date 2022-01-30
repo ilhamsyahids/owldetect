@@ -87,7 +87,6 @@ func tokenizeToSentence(text string) []sentenceToken {
 		if len(word) == 0 {
 			continue
 		}
-		word = strings.ToLower(word)
 
 		end = start + len(word)
 
@@ -145,7 +144,7 @@ func doAnalysis(input, ref string) []match {
 			}
 
 			// check if sentence is plagiat
-			if isPlagiatSentence(inputToken.Text, refToken.Text) {
+			if isPlagiatSentence(strings.ToLower(inputToken.Text), strings.ToLower(refToken.Text)) {
 				flags.Add(idx)
 
 				// remove front whitespace
