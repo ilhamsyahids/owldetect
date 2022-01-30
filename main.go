@@ -11,6 +11,8 @@ import (
 	"github.com/lithammer/fuzzysearch/fuzzy"
 )
 
+var indexMatches map[string]bool = map[string]bool{}
+
 func main() {
 	// define handlers
 	http.Handle("/", http.FileServer(http.Dir("./static")))
@@ -113,11 +115,26 @@ func isPlagiatSentence(input, ref string) bool {
 		i := start
 
 		for i < nRef {
-			if fuzzy.Match(inputToken, refTokens[i]) {
-				numMatch++
-				start = i
-				break
+			keys := inputToken + " " + refTokens[i]
+
+			val, exists := indexMatches[keys]
+
+			if exists {
+				if val {
+					numMatch++
+					start = i
+					break
+				}
+			} else {
+				if fuzzy.MatchNormalizedFold(inputToken, refTokens[i]) {
+					indexMatches[keys] = true
+					numMatch++
+					start = i
+					break
+				}
+				indexMatches[keys] = false
 			}
+
 			i++
 		}
 	}
