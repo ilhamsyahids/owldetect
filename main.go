@@ -6,6 +6,7 @@ import (
 	"net/http"
 	"os"
 	re "regexp"
+	"strings"
 )
 
 func main() {
@@ -17,6 +18,7 @@ func main() {
 			WriteAPIResp(w, NewErrorResp(NewErrMethodNotAllowed()))
 			return
 		}
+
 		// parse request body
 		var reqBody analyzeReqBody
 		err := json.NewDecoder(r.Body).Decode(&reqBody)
@@ -24,14 +26,17 @@ func main() {
 			WriteAPIResp(w, NewErrorResp(NewErrBadRequest(err.Error())))
 			return
 		}
+
 		// validate request body
 		err = reqBody.Validate()
 		if err != nil {
 			WriteAPIResp(w, NewErrorResp(err))
 			return
 		}
+
 		// do analysis
 		matches := doAnalysis(reqBody.InputText, reqBody.RefText)
+
 		// output success response
 		WriteAPIResp(w, NewSuccessResp(map[string]interface{}{
 			"matches": matches,
@@ -48,6 +53,10 @@ func main() {
 	if err != nil {
 		log.Fatalf("unable to run server due: %v", err)
 	}
+}
+
+func tokenizeToWord(text string) []string {
+	return strings.Split(text, " ")
 }
 
 func tokenizeToSentence(text string) []sentenceToken {
@@ -74,7 +83,27 @@ func tokenizeToSentence(text string) []sentenceToken {
 }
 
 func isPlagiatSentence(input, ref string) bool {
-	return true
+	inputTokens := tokenizeToWord(input)
+	refTokens := tokenizeToWord(ref)
+
+	nRef := len(refTokens)
+	numMatch := 0
+	start := 0
+
+	for _, inputToken := range inputTokens {
+		i := start
+
+		for i < nRef {
+			if refTokens[i] == inputToken {
+				numMatch++
+				start = i
+				break
+			}
+			i++
+		}
+	}
+
+	return (float32(2*numMatch) / float32(len(inputTokens)+len(refTokens))) >= float32(0.5)
 }
 
 func doAnalysis(input, ref string) []match {
