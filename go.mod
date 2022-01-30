@@ -1,4 +1,4 @@
-module github.com/riandyrn/owldetect
+module github.com/ilhamsyahids/owldetect
 
 // +heroku goVersion go1.15
 go 1.15
