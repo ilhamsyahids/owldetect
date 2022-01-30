@@ -85,7 +85,10 @@ func tokenizeToSentence(text string) []sentenceToken {
 		if len(word) == 0 {
 			continue
 		}
+		word = strings.ToLower(word)
+
 		end = start + len(word)
+
 		tokens = append(tokens, sentenceToken{
 			Text:  word,
 			Start: start,
