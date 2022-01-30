@@ -16,9 +16,6 @@ async function analyzeText() {
     divRefEl.innerHTML = refTextValue;
     divRefEl.classList.add("output-item");
 
-    output.appendChild(divInputEl);
-    output.appendChild(divRefEl);
-
     const response = await fetch("/analysis", {
         method: 'POST',
         headers: {
@@ -31,13 +28,43 @@ async function analyzeText() {
     });
 
     const apiResp = await response.json();
+
     if (apiResp.data.matches.length > 0) {
-        divInputEl.classList.add("red");
-        divRefEl.classList.add("red");
+        let offsetInput = 0;
+        let offsetRef = 0;
+
+        apiResp.data.matches.forEach(match => {
+            const lengthInputBefore = divInputEl.innerHTML.length;
+            outputMarkText(offsetInput, match.input, divInputEl);
+            const lengthInputAfter = divInputEl.innerHTML.length;
+            offsetInput += lengthInputAfter - lengthInputBefore
+
+            const lengthRefBefore = divRefEl.innerHTML.length;
+            outputMarkText(offsetRef, match.ref, divRefEl);
+            const lengthRefAfter = divRefEl.innerHTML.length;
+            offsetRef += lengthRefAfter - lengthRefBefore
+        })
+
         alert("plagiarism found!");
     } else {
         divInputEl.classList.add("green");
         divRefEl.classList.add("green");
         alert("no plagiarism");
     }
+
+    output.prepend(divRefEl);
+    output.prepend(divInputEl);
+}
+
+function outputMarkText(offset, matchInput, divElement) {
+    const start = matchInput.start_idx + offset;
+    const end = matchInput.end_idx + offset;
+
+    const textValue = divElement.innerHTML
+
+    const span = document.createElement("span");
+    span.classList.add("red");
+    span.innerHTML = textValue.substring(start, end);
+
+    divElement.innerHTML = divElement.innerHTML.substring(0, start) + span.outerHTML + divElement.innerHTML.substring(end);
 }
