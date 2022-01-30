@@ -29,6 +29,14 @@ body {
 	padding: 1em;
 }
 
+.green {
+    background: #066e06 !important;
+}
+
+.red {
+    background: #810707 !important;
+}
+
 /* Analyze */
 
 .analyze {
