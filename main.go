@@ -59,7 +59,17 @@ func main() {
 
 func tokenizeToWord(text string) []string {
 	// seperate word by space
-	return strings.Split(text, " ")
+	tokens := strings.Split(text, " ")
+	res := []string{}
+	for _, word := range tokens {
+		if word == "" || word == " " {
+			continue
+		}
+
+		res = append(res, word)
+	}
+
+	return res
 }
 
 func tokenizeToSentence(text string) []sentenceToken {
