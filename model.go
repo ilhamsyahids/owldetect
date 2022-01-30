@@ -75,3 +75,9 @@ type matchDetails struct {
 	StartIdx int    `json:"start_idx"`
 	EndIdx   int    `json:"end_idx"`
 }
+
+type sentenceToken struct {
+	Text  string `json:"text"`
+	Start int    `json:"start"`
+	End   int    `json:"end"`
+}

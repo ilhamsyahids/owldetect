@@ -5,7 +5,7 @@ import (
 	"log"
 	"net/http"
 	"os"
-	"strings"
+	re "regexp"
 )
 
 func main() {
@@ -50,23 +50,63 @@ func main() {
 	}
 }
 
+func tokenizeToSentence(text string) []sentenceToken {
+	reg := re.MustCompile(`[.!?]`)
+	sentence := reg.Split(text, -1)
+
+	tokens := []sentenceToken{}
+	start := 0
+	end := 0
+
+	for _, word := range sentence {
+		if len(word) == 0 {
+			continue
+		}
+		end = start + len(word)
+		tokens = append(tokens, sentenceToken{
+			Text:  word,
+			Start: start,
+			End:   end,
+		})
+		start = end + 1
+	}
+	return tokens
+}
+
+func isPlagiatSentence(input, ref string) bool {
+	return true
+}
+
 func doAnalysis(input, ref string) []match {
-	idx := strings.Index(ref, input)
-	if idx == -1 {
-		return nil
+	inputTokens := tokenizeToSentence(input)
+	refTokens := tokenizeToSentence(ref)
+
+	groupMatch := []match{}
+
+	flags := ItemSet{}
+
+	for _, inputToken := range inputTokens {
+		for idx, refToken := range refTokens {
+			if flags.Has(idx) {
+				continue
+			}
+			if isPlagiatSentence(inputToken.Text, refToken.Text) {
+				flags.Add(idx)
+				groupMatch = append(groupMatch, match{
+					Input: matchDetails{
+						Text:     inputToken.Text,
+						StartIdx: inputToken.Start,
+						EndIdx:   inputToken.End,
+					},
+					Reference: matchDetails{
+						Text:     refToken.Text,
+						StartIdx: refToken.Start,
+						EndIdx:   refToken.End,
+					},
+				})
+			}
+		}
 	}
-	return []match{
-		{
-			Input: matchDetails{
-				Text:     input,
-				StartIdx: 0,
-				EndIdx:   len(input) - 1,
-			},
-			Reference: matchDetails{
-				Text:     ref[idx : idx+len(input)],
-				StartIdx: idx,
-				EndIdx:   idx + len(input) - 1,
-			},
-		},
-	}
+
+	return groupMatch
 }
