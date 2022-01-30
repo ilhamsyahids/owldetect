@@ -4,3 +4,5 @@ module github.com/riandyrn/owldetect
 go 1.15
 
 require github.com/cheekybits/genny v1.0.0
+
+require github.com/lithammer/fuzzysearch v1.1.3

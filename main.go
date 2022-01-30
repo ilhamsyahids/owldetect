@@ -7,6 +7,8 @@ import (
 	"os"
 	re "regexp"
 	"strings"
+
+	"github.com/lithammer/fuzzysearch/fuzzy"
 )
 
 func main() {
@@ -112,7 +114,7 @@ func isPlagiatSentence(input, ref string) bool {
 		i := start
 
 		for i < nRef {
-			if refTokens[i] == inputToken {
+			if fuzzy.Match(inputToken, refTokens[i]) {
 				numMatch++
 				start = i
 				break
