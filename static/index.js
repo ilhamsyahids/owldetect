@@ -45,17 +45,30 @@ async function analyzeText() {
         divInputEl.classList.add("red")
         divRefEl.classList.add("red")
 
-        alert("plagiarism found!");
+        addNotification("Plagiarism found!");
     } else {
         divInputEl.classList.add("green");
         divRefEl.classList.add("green");
-        alert("no plagiarism");
+
+        addNotification("No plagiarism found", true);
     }
 
     output.prepend(divRefEl);
     output.prepend(divInputEl);
 
     document.getElementById("clear").hidden = false;
+}
+
+function addNotification(msg, isSuccess = false) {
+    const notification = document.createElement("div");
+    notification.classList.add("notification");
+    notification.innerHTML = msg;
+    notification.classList.add(isSuccess ? "success" : "error");
+    document.body.prepend(notification);
+
+    setTimeout(() => {
+        notification.remove();
+    }, 2000)
 }
 
 function outputMarkText(matchInput, element, color) {

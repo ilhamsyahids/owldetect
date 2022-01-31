@@ -37,6 +37,28 @@ body {
     border: 2px solid #ff4747 !important;
 }
 
+/* Notification */
+
+.notification {
+    position: fixed;
+    top: 10px;
+    right: 10px;
+    padding: 10px;
+    display: flex;
+    justify-content: center;
+    border-radius: 6px;
+    align-items: center;
+    z-index: 99999;
+}
+
+.success {
+    background: #066e06;
+}
+
+.error {
+    background: #ff4747;
+}
+
 /* Analyze */
 
 .analyze {
