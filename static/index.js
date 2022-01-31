@@ -34,19 +34,16 @@ async function analyzeText() {
         const matchesRef = []
 
         apiResp.data.matches.forEach(match => {
-            matchesInput.push(match.input)
-            matchesRef.push(match.ref)
+            const color = randomHexColor()
+            matchesInput.push({ text: match.input, color })
+            matchesRef.push({ text: match.ref, color })
         })
 
-        matchesInput.sort((a, b) => b.start_idx - a.start_idx)
-        matchesInput.forEach(matchInput => {
-            divInputEl.innerHTML = outputMarkText(matchInput, divInputEl)
-        })
+        highlightMatchesText(matchesInput, divInputEl)
+        highlightMatchesText(matchesRef, divRefEl)
 
-        matchesRef.sort((a, b) => b.start_idx - a.start_idx)
-        matchesRef.forEach(matchInput => {
-            divRefEl.innerHTML = outputMarkText(matchInput, divRefEl)
-        })
+        divInputEl.classList.add("red")
+        divRefEl.classList.add("red")
 
         alert("plagiarism found!");
     } else {
@@ -61,12 +58,12 @@ async function analyzeText() {
     document.getElementById("clear").hidden = false;
 }
 
-function outputMarkText(matchInput, element) {
+function outputMarkText(matchInput, element, color) {
     const idx = element.innerHTML.indexOf(matchInput.text);
 
     const span = document.createElement("span");
-    span.classList.add("red");
     span.innerHTML = matchInput.text;
+    span.style.color = color
 
     const front = element.innerHTML.substring(0, idx)
     const back = element.innerHTML.substring(idx + matchInput.text.length)
@@ -77,4 +74,18 @@ function clearOutput() {
     const output = document.getElementById("output");
     output.innerHTML = "";
     document.getElementById("clear").hidden = true;
+}
+
+function randomHexColor() {
+    return `#${Math.random().toString(16).slice(2, 8)}`;
+}
+
+function highlightMatchesText(matches, element) {
+    matches.sort((a, b) => b.text.start_idx - a.text.start_idx)
+    matches.forEach(match => {
+        const color = match.color
+        const text = match.text
+
+        element.innerHTML = outputMarkText(text, element, color)
+    })
 }

@@ -34,7 +34,7 @@ body {
 }
 
 .red {
-    color: #ff4747 !important;
+    border: 2px solid #ff4747 !important;
 }
 
 /* Analyze */
@@ -43,7 +43,7 @@ body {
     text-align: center;
 }
 
-.btn-animate {
+button {
     width: 140px;
     height: 45px;
     font-size: 23px;
