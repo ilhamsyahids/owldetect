@@ -35,26 +35,38 @@ Content-Type: application/json
         "matches": [
             {
                 "input": {
-                    "text": "Why upon your first voyage as a passenger, did you yourself feel such a mystical vibration, when first told that you and your ship were now out of sight of land? Why did the old Persians hold the sea holy?",
+                    "text": "Why upon your first voyage as a passenger, did you yourself feel such a mystical vibration, when first told that you and your ship were now out of sight of land? Why did the old Persians hold the sea holy? ",
                     "start_idx": 0,
                     "end_idx": 205
                 },
                 "ref": {
-                    "text": "Why upon your first voyage as a passenger, did you yourself feel such a mystical vibration, when first told that you and your ship were now out of sight of land? Why did the old Persians hold the sea holy?",
-                    "start_idx": 1939,
-                    "end_idx": 2144
+                    "text": "Why upon your first voyage as a passenger, did you yourself feel such a mystical vibration, when first told that you and your ship were now out of sight of land? Why did the old Persians hold the sea holy? ",
+                    "start_idx": 1951,
+                    "end_idx": 2156
                 }
             },
             {
                 "input": {
-                    "text": "Go visit the Prairies in June, when for scores on scores of miles you wade knee-deep among tiger lilies what is the one charm wanting-water-there is not a drop of water there! Were Niagara but a cataract of sand, would you travel your thousand miles to see it?",
-                    "start_idx": 813,
-                    "end_idx": 1073
+                    "text": "Go visit the Prairies in June, when for scores on scores of miles you wade knee-deep among tiger lilies what is the one charm wanting-water-there is not a drop of water there",
+                    "start_idx": 805,
+                    "end_idx": 978
                 },
                 "ref": {
-                    "text": "Go visit the Prairies in June, when for scores on scores of miles you wade knee-deep among Tiger-lilies—what is the one charm wanting?—Water—there is not a drop of water there! Were Niagara but a cataract of sand, would you travel your thousand miles to see it?",
-                    "start_idx": 1368,
-                    "end_idx": 1629
+                    "text": "Go visit the Prairies in June, when for scores on scores of miles you wade knee-deep among Tiger-lilies—what is the one charm wanting",
+                    "start_idx": 1362,
+                    "end_idx": 1496
+                }
+            },
+            {
+                "input": {
+                    "text": "Were Niagara but a cataract of sand, would you travel your thousand miles to see it?",
+                    "start_idx": 981,
+                    "end_idx": 1064
+                },
+                "ref": {
+                    "text": "Were Niagara but a cataract of sand, would you travel your thousand miles to see it?",
+                    "start_idx": 1545,
+                    "end_idx": 1628
                 }
             }
         ]
