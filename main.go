@@ -79,21 +79,21 @@ func tokenizeToWord(text string) []string {
 func tokenizeToSentence(text string) []sentenceToken {
 	// seperate sentence by dot, question mark, exclamation mark
 	reg := re.MustCompile(`[.!?]`)
-	sentence := reg.Split(text, -1)
+	sentences := reg.Split(text, -1)
 
 	tokens := []sentenceToken{}
 	start := 0
 	end := 0
 
-	for _, word := range sentence {
-		if len(word) == 0 {
+	for _, sentence := range sentences {
+		if len(sentence) == 0 {
 			continue
 		}
 
-		end = start + len(word)
+		end = start + len(sentence)
 
 		tokens = append(tokens, sentenceToken{
-			Text:  word,
+			Text:  sentence,
 			Start: start,
 			End:   end,
 		})
@@ -142,6 +142,31 @@ func isPlagiatSentence(input, ref string) bool {
 	return (float32(2*numMatch) / float32(len(inputTokens)+len(refTokens))) >= float32(0.5)
 }
 
+func mergeIntervals(intervals []match) []match {
+	// merge overlapping intervals index
+	res := []match{}
+
+	for idx, interval := range intervals {
+		if idx == 0 {
+			res = append(res, interval)
+			continue
+		}
+
+		prev := res[len(res)-1]
+
+		if prev.Input.EndIdx < interval.Input.StartIdx {
+			res = append(res, interval)
+		} else {
+			if interval.Input.EndIdx > prev.Input.EndIdx {
+				prev.Input.EndIdx = interval.Input.EndIdx
+				prev.Reference.EndIdx = interval.Reference.EndIdx
+			}
+		}
+	}
+
+	return res
+}
+
 func doAnalysis(input, ref string) []match {
 
 	// tokenize input and ref
@@ -175,22 +200,34 @@ func doAnalysis(input, ref string) []match {
 					refToken.Start++
 				}
 
+				// add same character at the end
+				for (inputToken.End < len(input)) && (refToken.End < len(ref)) && (string(input[inputToken.End]) == string(ref[refToken.End])) {
+					val := string(input[inputToken.End])
+					inputToken.Text += val
+					inputToken.End++
+					refToken.Text += val
+					refToken.End++
+				}
+
+				inputIdx := inputToken.Start
+				refIdx := refToken.Start
+
 				// add match to group
 				groupMatch = append(groupMatch, match{
 					Input: matchDetails{
 						Text:     inputToken.Text,
-						StartIdx: inputToken.Start,
-						EndIdx:   inputToken.End,
+						StartIdx: inputIdx,
+						EndIdx:   inputIdx + len(inputToken.Text) - 1,
 					},
 					Reference: matchDetails{
 						Text:     refToken.Text,
-						StartIdx: refToken.Start,
-						EndIdx:   refToken.End,
+						StartIdx: refIdx,
+						EndIdx:   refIdx + len(refToken.Text) - 1,
 					},
 				})
 			}
 		}
 	}
 
-	return groupMatch
+	return mergeIntervals(groupMatch)
 }
