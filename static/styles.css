@@ -43,7 +43,7 @@ body {
     text-align: center;
 }
 
-button {
+.btn-animate {
     width: 140px;
     height: 45px;
     font-size: 23px;
@@ -59,7 +59,7 @@ button {
     z-index: 1;
 }
    
-button::before {
+.btn-animate::before {
     content: "";
     position: absolute;
     top: 0;
@@ -71,15 +71,15 @@ button::before {
     transition: all 0.5s;
 }
    
-button:hover::before {
+.btn-animate:hover::before {
     width: 100%;
 }
    
-button:hover {
+.btn-animate:hover {
     color: black;
 }
 
-button:active:before {
+.btn-animate:active:before {
     background: #b9b9b9;
 }
 

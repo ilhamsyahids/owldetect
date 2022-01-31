@@ -30,19 +30,22 @@ async function analyzeText() {
     const apiResp = await response.json();
 
     if (apiResp.data.matches.length > 0) {
-        let offsetInput = 0;
-        let offsetRef = 0;
+        const matchesInput = []
+        const matchesRef = []
 
         apiResp.data.matches.forEach(match => {
-            const lengthInputBefore = divInputEl.innerHTML.length;
-            outputMarkText(offsetInput, match.input, divInputEl);
-            const lengthInputAfter = divInputEl.innerHTML.length;
-            offsetInput += lengthInputAfter - lengthInputBefore
+            matchesInput.push(match.input)
+            matchesRef.push(match.ref)
+        })
 
-            const lengthRefBefore = divRefEl.innerHTML.length;
-            outputMarkText(offsetRef, match.ref, divRefEl);
-            const lengthRefAfter = divRefEl.innerHTML.length;
-            offsetRef += lengthRefAfter - lengthRefBefore
+        matchesInput.sort((a, b) => b.start_idx - a.start_idx)
+        matchesInput.forEach(matchInput => {
+            divInputEl.innerHTML = outputMarkText(matchInput, divInputEl)
+        })
+
+        matchesRef.sort((a, b) => b.start_idx - a.start_idx)
+        matchesRef.forEach(matchInput => {
+            divRefEl.innerHTML = outputMarkText(matchInput, divRefEl)
         })
 
         alert("plagiarism found!");
@@ -54,17 +57,24 @@ async function analyzeText() {
 
     output.prepend(divRefEl);
     output.prepend(divInputEl);
+
+    document.getElementById("clear").hidden = false;
 }
 
-function outputMarkText(offset, matchInput, divElement) {
-    const start = matchInput.start_idx + offset;
-    const end = matchInput.end_idx + offset;
-
-    const textValue = divElement.innerHTML
+function outputMarkText(matchInput, element) {
+    const idx = element.innerHTML.indexOf(matchInput.text);
 
     const span = document.createElement("span");
     span.classList.add("red");
-    span.innerHTML = textValue.substring(start, end);
+    span.innerHTML = matchInput.text;
 
-    divElement.innerHTML = divElement.innerHTML.substring(0, start) + span.outerHTML + divElement.innerHTML.substring(end);
+    const front = element.innerHTML.substring(0, idx)
+    const back = element.innerHTML.substring(idx + matchInput.text.length)
+    return front + span.outerHTML + back;
+}
+
+function clearOutput() {
+    const output = document.getElementById("output");
+    output.innerHTML = "";
+    document.getElementById("clear").hidden = true;
 }
