@@ -1,56 +1,85 @@
-# OwlDetect
 
-Welcome to Haraj take home challenge!
+# Owl Detect
 
-In this challenge you will be assigned to help fictional startup called `OwlDetect` to create their first product. 
+Two text plagiarism checker.
 
-`OwlDetect` is a startup that want to fight plagiarism in education sector. They want to create a web app that can be used by highschool teachers to check plagiarism in their students homework.
+## Table of Contents
 
-Plagiarism in highschool is mostly not complicated, usually they fall into one of following category:
+- [Demo](#demo)
+- [Features](#features)
+- [Prerequisites](#Prerequisites)
+- [Improvement](#improvement)
+    - [Server Side](#server-side)
+    - [Client Side](#client-side)
+- [Next Improvement](#next-improvement)
 
-1. Students copy the exact phrases from other students homework
-2. Students copy then alter some words in the copied phrases
-3. Students copy only some phrases while also adding their own phrases
+## Demo
 
-In this repo you will find prototype for `OwlDetect` web app. However currently it is not yet working as they expected because it could only check for the exact match text.
+[Demo here](http://owl-detect.herokuapp.com/)
 
-You could see the live version for this app [here](https://dry-woodland-18779.herokuapp.com/).
+## Features
 
-You could check how the web app should function by reading [http_api.md](./http_api.md).
+- Check similarity sentence by tokenizing and fuzziness search within two text.
+- Highlight plagiarism sentences.
+- Start and end index of plagiarism sentences.
+- Checking history
+- Unit test and deploy on Heroku
 
-## Your Mission
+## Prerequisites
 
-Improve the overall app. Think about the problem from user perspective and prioritize your changes according to what you think is most useful.
+- [Golang](https://go.dev/dl/) ^1.15
 
-## Evalution
+## Getting Started
 
-We will evaluate your submission based on:
+- Install [prerequisites](#prerequisites)
+- Start project
+    ```
+    go run main.go
+    ```
 
-1. The approach you are using to identify & solve the problems
-2. The quality of your text analysis result
-3. The design & testability of your code
-4. The method you are using to deploy your app
+## Improvement
 
-## Submission
+### Server Side
 
-1. Fork this repo.
-2. Make the necessary changes.
-3. Deploy your solution. This project includes Heroku Procfile and in its current state can be deployed easily on free tier. You could also host the app on your own server.
-4. Submit the link of your fork, deployment URL, CV, & cover letter to [this page](https://stackoverflow.com/jobs/558729?so_medium=Talent&so_source=Talent).
-5. In your cover letter, share with us what changes you have made and what further changes you would prioritize if you had more time.
+High-level improvement:
+1. For each document will tokenize to sentences, simply using regex to separate by dot, question mark, and exclamation mark.
+2. Iterate through all the input sentences and compare them with every reference sentence.
+3. Two sentences will check the similarity (detail below).
+4. Reference sentences that are already stated as plagiarism will not be computed in other input sentences.
+5. Lastly, will merge overlapped index intervals
 
-## Deadline
+For checking the similarity of two sentences, we could compare directly with equal, but it won't work well if at least one char is different.
+Instead, here's the detailed algorithm:
+1. Each sentence tokenizes it by word (split by space).
+2. Compare every input word with all reference words.
+Simply rule: we can use equals, but I change with fuzzy search.
+The reason is to approach alter some char in a word.
+To prevent the same word double compute, we store the result on map index.
+3. Count matches words and percentage them.
+4. If below with threshold (50%) then the sentences are not similar, otherwise similar.
 
-There is no exact deadline date for this project. The only deadline is when the vacancy has been closed. We plan to open it until `2022-03-15`.
+This approach is far from perfect, kindly give me feedback.
 
-So feel free to take your time!
+### Client Side
 
-> **Note:**
->
-> Just fyi, this submission make up to `50%` from your overall hiring score. While your CV only make up to `5%`.
->
-> So do your best to create great submission! 😁
+1. Overall UI, adding style and re-structure HTML.
+2. Highlight sentence that is similar with the same color both in input and reference.
+3. Use a notification to give feedback that will discard 2s later.
 
-## Questions
+## Next Improvement
 
-Got any questions? Feel free to open [issues](https://github.com/riandyrn/owldetect/issues).
+Checker Algorithm:
+- Using stop words to not check "unimportant word". But we need a lot of stop words.
+- Split sentence with other considerations, not only dot, question mark, and exclamation mark.
+- Remove symbols such as dash, underscore, etc.
+
+Frontend:
+- Use local storage to store history
+- Mobile friendly
+
+Backend:
+- Integration test
+
+Deployment:
+- Add more deployment, such as using Docker
+- Add more release platform, such as GCP, AWS, DO
