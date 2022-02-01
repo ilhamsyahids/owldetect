@@ -21,3 +21,6 @@ jobs:
 
     - name: Build Go
       run: go build main.go
+
+    - name: Test Go
+      run: go test -v -cover ./...
