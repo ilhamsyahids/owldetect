@@ -1,10 +1,12 @@
-package main
+package api
 
 import (
 	"encoding/json"
 	"errors"
 	"net/http"
 	"time"
+
+	err "github.com/ilhamsyahids/owldetect/helpers/errors"
 )
 
 type ApiResp struct {
@@ -25,10 +27,10 @@ func NewSuccessResp(data interface{}) ApiResp {
 	}
 }
 
-func NewErrorResp(err error) ApiResp {
-	var e *Error
-	if !errors.As(err, &e) {
-		e = NewErrInternalError(err)
+func NewErrorResp(er error) ApiResp {
+	var e *err.Error
+	if !errors.As(er, &e) {
+		e = err.NewErrInternalError(er)
 	}
 	return ApiResp{
 		StatusCode: e.StatusCode,
@@ -47,37 +49,20 @@ func WriteAPIResp(w http.ResponseWriter, resp ApiResp) {
 	w.Write(b)
 }
 
-type analyzeReqBody struct {
+type AnalyzeReqBody struct {
 	InputText string `json:"input_text"`
 	RefText   string `json:"ref_text"`
 }
 
-func (rb analyzeReqBody) Validate() error {
+func (rb AnalyzeReqBody) Validate() error {
 	if len(rb.InputText) == 0 {
-		return NewErrBadRequest("missing `input_text`")
+		return err.NewErrBadRequest("missing `input_text`")
 	}
 	if len(rb.RefText) == 0 {
-		return NewErrBadRequest("missing `ref_text`")
+		return err.NewErrBadRequest("missing `ref_text`")
 	}
 	if len(rb.InputText) > len(rb.RefText) {
-		return NewErrBadRequest("`ref_text` must be longer than `input_text`")
+		return err.NewErrBadRequest("`ref_text` must be longer than `input_text`")
 	}
 	return nil
-}
-
-type match struct {
-	Input     matchDetails `json:"input"`
-	Reference matchDetails `json:"ref"`
-}
-
-type matchDetails struct {
-	Text     string `json:"text"`
-	StartIdx int    `json:"start_idx"`
-	EndIdx   int    `json:"end_idx"`
-}
-
-type sentenceToken struct {
-	Text  string `json:"text"`
-	Start int    `json:"start"`
-	End   int    `json:"end"`
 }

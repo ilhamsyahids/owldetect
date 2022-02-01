@@ -1,4 +1,4 @@
-package main
+package set
 
 import "github.com/cheekybits/genny/generic"
 
