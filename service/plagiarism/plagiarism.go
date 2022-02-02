@@ -21,9 +21,9 @@ type matchDetails struct {
 }
 
 type sentenceToken struct {
-	Text  string `json:"text"`
-	Start int    `json:"start"`
-	End   int    `json:"end"`
+	Text  string
+	Start int
+	End   int
 }
 
 var indexMatches map[string]bool = map[string]bool{}
@@ -42,14 +42,45 @@ func tokenizeToSentence(text string) []sentenceToken {
 			continue
 		}
 
+		// remove front whitespace
+		i := 0
+		for {
+			if sentence[0] == ' ' {
+				sentence = sentence[1:]
+			} else {
+				break
+			}
+		}
+
+		// add back sentence
 		end = start + len(sentence)
+		for end < len(text) {
+			if text[end] == '!' || text[end] == '.' || text[end] == '?' {
+				sentence = text[start : end+1]
+				end++
+			} else {
+				break
+			}
+
+			i++
+		}
 
 		tokens = append(tokens, sentenceToken{
 			Text:  sentence,
 			Start: start,
-			End:   end,
+			End:   end - 1,
 		})
 		start = end + 1
+
+		for start < len(text) {
+			if text[start] == ' ' {
+				start++
+			} else {
+				break
+			}
+
+			i++
+		}
 	}
 	return tokens
 }
@@ -155,26 +186,6 @@ func Analyze(input, ref string) []match {
 			// check if sentence is plagiat
 			if checkPlagiarismSentence(strings.ToLower(inputToken.Text), strings.ToLower(refToken.Text)) {
 				flags.Add(idx)
-
-				// remove front whitespace
-				for inputToken.Text[0] == ' ' {
-					inputToken.Text = inputToken.Text[1:]
-					inputToken.Start++
-				}
-
-				for refToken.Text[0] == ' ' {
-					refToken.Text = refToken.Text[1:]
-					refToken.Start++
-				}
-
-				// add same character at the end
-				for (inputToken.End < len(input)) && (refToken.End < len(ref)) && (string(input[inputToken.End]) == string(ref[refToken.End])) {
-					val := string(input[inputToken.End])
-					inputToken.Text += val
-					inputToken.End++
-					refToken.Text += val
-					refToken.End++
-				}
 
 				inputIdx := inputToken.Start
 				refIdx := refToken.Start
