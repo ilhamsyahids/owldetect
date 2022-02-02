@@ -106,3 +106,20 @@ func Test_Tokenize_Sentence_2(t *testing.T) {
 
 	assert.Equal(t, expected, tokens)
 }
+
+func Test_Tokenize_Word(t *testing.T) {
+	text := `hello world, I am a sentence     !`
+
+	expected := []string{
+		`hello`,
+		`world`,
+		`I`,
+		`am`,
+		`a`,
+		`sentence`,
+	}
+
+	tokens := tokenizeToWord(text)
+
+	assert.Equal(t, expected, tokens)
+}
