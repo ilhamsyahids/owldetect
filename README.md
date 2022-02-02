@@ -79,7 +79,7 @@ Frontend:
 - Mobile friendly
 
 Backend:
-- Integration test
+- ~~Integration test~~
 
 Deployment:
 - Add more deployment, such as using Docker
