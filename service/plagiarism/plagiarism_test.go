@@ -123,3 +123,39 @@ func Test_Tokenize_Word(t *testing.T) {
 
 	assert.Equal(t, expected, tokens)
 }
+
+func Test_Check_Plagiarism_Sentence_All_Same(t *testing.T) {
+	text := `hello world, I am a sentence     !`
+	ref := `hello world, I am a sentence     !`
+
+	result := checkPlagiarismSentence(text, ref)
+
+	assert.True(t, result)
+}
+
+func Test_Check_Plagiarism_Sentence_Half_Same(t *testing.T) {
+	text := `hello world, I am a sentence     !`
+	ref := `hello word, I m sentence!`
+
+	result := checkPlagiarismSentence(text, ref)
+
+	assert.True(t, result)
+}
+
+func Test_Check_Plagiarism_Sentence_Below_Threshold_Same(t *testing.T) {
+	text := `hello world, I am a sentence     !`
+	ref := `Hlo word, I m sentence!`
+
+	result := checkPlagiarismSentence(text, ref)
+
+	assert.False(t, result)
+}
+
+func Test_Check_Plagiarism_Sentence_Not_Same(t *testing.T) {
+	text := `hello world, I am a sentence     !`
+	ref := `Good BYE!`
+
+	result := checkPlagiarismSentence(text, ref)
+
+	assert.False(t, result)
+}
