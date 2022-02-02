@@ -8,7 +8,7 @@ import (
 )
 
 func Test_MatchDetails_To_JSON(t *testing.T) {
-	var md matchDetails = matchDetails{
+	var md MatchDetails = MatchDetails{
 		Text:     `text`,
 		StartIdx: 0,
 		EndIdx:   3,
@@ -23,12 +23,12 @@ func Test_MatchDetails_To_JSON(t *testing.T) {
 }
 
 func Test_Match_To_JSON(t *testing.T) {
-	inp := matchDetails{
+	inp := MatchDetails{
 		Text:     `hello`,
 		StartIdx: 0,
 		EndIdx:   4,
 	}
-	ref := matchDetails{
+	ref := MatchDetails{
 		Text:     `helloo`,
 		StartIdx: 5,
 		EndIdx:   10,
@@ -37,7 +37,7 @@ func Test_Match_To_JSON(t *testing.T) {
 	expected_inp := `{"text":"hello","start_idx":0,"end_idx":4}`
 	expected_ref := `{"text":"helloo","start_idx":5,"end_idx":10}`
 
-	m := match{
+	m := Match{
 		Input:     inp,
 		Reference: ref,
 	}

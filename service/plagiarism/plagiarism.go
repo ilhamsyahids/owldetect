@@ -9,12 +9,12 @@ import (
 	"github.com/lithammer/fuzzysearch/fuzzy"
 )
 
-type match struct {
-	Input     matchDetails `json:"input"`
-	Reference matchDetails `json:"ref"`
+type Match struct {
+	Input     MatchDetails `json:"input"`
+	Reference MatchDetails `json:"ref"`
 }
 
-type matchDetails struct {
+type MatchDetails struct {
 	Text     string `json:"text"`
 	StartIdx int    `json:"start_idx"`
 	EndIdx   int    `json:"end_idx"`
@@ -141,9 +141,9 @@ func checkPlagiarismSentence(input, ref string) bool {
 	return (float32(2*numMatch) / float32(len(inputTokens)+len(refTokens))) >= float32(0.5)
 }
 
-func mergeIntervals(intervals []match) []match {
+func mergeIntervals(intervals []Match) []Match {
 	// merge overlapping intervals index
-	res := []match{}
+	res := []Match{}
 
 	for idx, interval := range intervals {
 		if idx == 0 {
@@ -166,7 +166,7 @@ func mergeIntervals(intervals []match) []match {
 	return res
 }
 
-func Analyze(input, ref string) []match {
+func Analyze(input, ref string) []Match {
 	// remove front and back whitespace
 	input = strings.Trim(input, " ")
 	ref = strings.Trim(ref, " ")
@@ -175,7 +175,7 @@ func Analyze(input, ref string) []match {
 	inputTokens := tokenizeToSentence(input)
 	refTokens := tokenizeToSentence(ref)
 
-	groupMatch := []match{}
+	groupMatch := []Match{}
 
 	// flags for sentence that already matched
 	flags := set.ItemSet{}
@@ -195,13 +195,13 @@ func Analyze(input, ref string) []match {
 				refIdx := refToken.Start
 
 				// add match to group
-				groupMatch = append(groupMatch, match{
-					Input: matchDetails{
+				groupMatch = append(groupMatch, Match{
+					Input: MatchDetails{
 						Text:     inputToken.Text,
 						StartIdx: inputIdx,
 						EndIdx:   inputIdx + len(inputToken.Text) - 1,
 					},
-					Reference: matchDetails{
+					Reference: MatchDetails{
 						Text:     refToken.Text,
 						StartIdx: refIdx,
 						EndIdx:   refIdx + len(refToken.Text) - 1,
