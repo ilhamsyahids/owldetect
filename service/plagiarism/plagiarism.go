@@ -87,7 +87,8 @@ func tokenizeToSentence(text string) []sentenceToken {
 
 func tokenizeToWord(text string) []string {
 	// seperate word by space
-	tokens := strings.Split(text, " ")
+	reg := regexp.MustCompile(`[^\w+]`)
+	tokens := reg.Split(text, -1)
 	res := []string{}
 	for _, word := range tokens {
 		if word == "" || word == " " {
