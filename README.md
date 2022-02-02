@@ -71,9 +71,10 @@ This approach is far from perfect, kindly give me feedback.
 Checker Algorithm:
 - Using stop words to not check "unimportant word". But we need a lot of stop words.
 - Split sentence with other considerations, not only dot, question mark, and exclamation mark.
-- Remove symbols such as dash, underscore, etc.
+- ~~Remove symbols such as dash, underscore, etc.~~
 
 Frontend:
+- Integration test
 - Use local storage to store history
 - Mobile friendly
 
