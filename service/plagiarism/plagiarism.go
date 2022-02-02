@@ -141,32 +141,10 @@ func checkPlagiarismSentence(input, ref string) bool {
 	return (float32(2*numMatch) / float32(len(inputTokens)+len(refTokens))) >= float32(0.5)
 }
 
-func mergeIntervals(intervals []match) []match {
-	// merge overlapping intervals index
-	res := []match{}
-
-	for idx, interval := range intervals {
-		if idx == 0 {
-			res = append(res, interval)
-			continue
-		}
-
-		prev := res[len(res)-1]
-
-		if prev.Input.EndIdx < interval.Input.StartIdx {
-			res = append(res, interval)
-		} else {
-			if interval.Input.EndIdx > prev.Input.EndIdx {
-				prev.Input.EndIdx = interval.Input.EndIdx
-				prev.Reference.EndIdx = interval.Reference.EndIdx
-			}
-		}
-	}
-
-	return res
-}
-
 func Analyze(input, ref string) []match {
+	// remove front and back whitespace
+	input = strings.Trim(input, " ")
+	ref = strings.Trim(ref, " ")
 
 	// tokenize input and ref
 	inputTokens := tokenizeToSentence(input)
@@ -208,5 +186,5 @@ func Analyze(input, ref string) []match {
 		}
 	}
 
-	return mergeIntervals(groupMatch)
+	return groupMatch
 }
